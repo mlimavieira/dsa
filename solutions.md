@@ -858,6 +858,20 @@ public int maxValueOfTriplet(int[] nums) {
 ```
 ---
 
+### 🟢 1863. Sum of All Subset XOR Totals (#1863, Easy)
+Backtracking to explore all subsets and sum their XORs.
+
+```java
+public int subsetXORSum(int[] nums) {
+    return dfs(nums, 0, 0);
+}
+
+private int dfs(int[] nums, int index, int currentXOR) {
+    if (index == nums.length) return currentXOR;
+    return dfs(nums, index + 1, currentXOR ^ nums[index]) + dfs(nums, index + 1, currentXOR);
+}
+```
+---
 
 
 
