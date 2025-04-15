@@ -171,15 +171,20 @@ public int climbStairs(int n) {
 Two pointers from end; merge into nums1 backwards.
 
 ```java
-public void merge(int[] nums1, int m, int[] nums2, int n) {
-    int i = m - 1, j = n - 1, k = m + n - 1;
-    while (i >= 0 && j >= 0) {
-        nums1[k--] = (nums1[i] > nums2[j]) ? nums1[i--] : nums2[j--];
+    public void merge(final int[] nums1, final int m, final int[] nums2, final int n) {
+        final int[] auxNums1 = Arrays.copyOf(nums1, nums1.length);
+        int idxNums1 = 0;
+        int idxNums2 = 0;
+        for (int i = 0; i < n + m; i++) {
+            if (idxNums2 >= n || (idxNums1 < m && auxNums1[idxNums1] < nums2[idxNums2])) {
+                nums1[i] = auxNums1[idxNums1++];
+                idxNums1++;
+            } else {
+                nums1[i] = auxNums1[idxNums2++];
+                idxNums2++;
+            }
+        }
     }
-    while (j >= 0) {
-        nums1[k--] = nums2[j--];
-    }
-}
 ```
 
 ---
