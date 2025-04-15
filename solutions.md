@@ -63,25 +63,62 @@ public String longestCommonPrefix(String[] strs) {
 Use a LinkedHashMap or implement with HashMap + Doubly Linked List.
 
 ```java
-class LRUCache extends LinkedHashMap<Integer, Integer> {
-    private int capacity;
+class LRUCache {
+
+    private class Node {
+        int key, value;
+        Node prev, next;
+        Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    private final Map<Integer, Node> map;
+    private final int capacity;
+    private final Node head, tail;
 
     public LRUCache(int capacity) {
-        super(capacity, 0.75f, true);
         this.capacity = capacity;
+        map = new HashMap<>();
+        head = new Node(0, 0); // dummy head
+        tail = new Node(0, 0); // dummy tail
+        head.next = tail;
+        tail.prev = head;
     }
 
     public int get(int key) {
-        return super.getOrDefault(key, -1);
+        if (!map.containsKey(key)) return -1;
+        Node node = map.get(key);
+        remove(node);
+        insertToFront(node);
+        return node.value;
     }
 
     public void put(int key, int value) {
-        super.put(key, value);
+        if (map.containsKey(key)) {
+            remove(map.get(key));
+        }
+        Node node = new Node(key, value);
+        insertToFront(node);
+        map.put(key, node);
+        if (map.size() > capacity) {
+            Node lru = tail.prev;
+            remove(lru);
+            map.remove(lru.key);
+        }
     }
 
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
-        return size() > capacity;
+    private void remove(Node node) {
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    private void insertToFront(Node node) {
+        node.next = head.next;
+        node.prev = head;
+        head.next.prev = node;
+        head.next = node;
     }
 }
 ```
@@ -641,6 +678,186 @@ public class Codec {
 }
 ```
 ---
+
+
+### 🟢 455. Assign Cookies (#455, Easy)
+Sort greed factor and cookie size arrays. Match smallest cookie that satisfies each child.
+
+```java
+public int findContentChildren(int[] g, int[] s) {
+    Arrays.sort(g);
+    Arrays.sort(s);
+    int i = 0, j = 0;
+    while (i < g.length && j < s.length) {
+        if (s[j] >= g[i]) i++;
+        j++;
+    }
+    return i;
+}
+```
+---
+
+### 🟢 645. Set Mismatch (#645, Easy)
+Use a frequency array to detect the duplicate and missing.
+
+```java
+public int[] findErrorNums(int[] nums) {
+    int[] freq = new int[nums.length + 1];
+    for (int num : nums) freq[num]++;
+    int dup = -1, miss = -1;
+    for (int i = 1; i < freq.length; i++) {
+        if (freq[i] == 2) dup = i;
+        if (freq[i] == 0) miss = i;
+    }
+    return new int[]{dup, miss};
+}
+```
+---
+
+### 🟢 1768. Merge Strings Alternately (#1768, Easy)
+Alternate between characters from both strings.
+
+```java
+public String mergeAlternately(String word1, String word2) {
+    StringBuilder sb = new StringBuilder();
+    int i = 0, j = 0;
+    while (i < word1.length() || j < word2.length()) {
+        if (i < word1.length()) sb.append(word1.charAt(i++));
+        if (j < word2.length()) sb.append(word2.charAt(j++));
+    }
+    return sb.toString();
+}
+```
+---
+
+### 🟡 48. Rotate Image (#48, Medium)
+Transpose then reverse each row.
+
+```java
+public void rotate(int[][] matrix) {
+    int n = matrix.length;
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
+            int temp = matrix[i][j];
+            matrix[i][j] = matrix[j][i];
+            matrix[j][i] = temp;
+        }
+    }
+    for (int[] row : matrix) {
+        for (int i = 0, j = row.length - 1; i < j; i++, j--) {
+            int temp = row[i];
+            row[i] = row[j];
+            row[j] = temp;
+        }
+    }
+}
+```
+---
+
+### 🟡 235. Lowest Common Ancestor of a BST (#235, Medium)
+Recursive BST traversal.
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (p.val < root.val && q.val < root.val) {
+        return lowestCommonAncestor(root.left, p, q);
+    } else if (p.val > root.val && q.val > root.val) {
+        return lowestCommonAncestor(root.right, p, q);
+    } else {
+        return root;
+    }
+}
+```
+---
+
+### 🟡 875. Koko Eating Bananas (#875, Medium)
+Binary search on possible eating speeds.
+
+```java
+public int minEatingSpeed(int[] piles, int h) {
+    int low = 1, high = Arrays.stream(piles).max().getAsInt();
+    while (low < high) {
+        int mid = (low + high) / 2;
+        int time = 0;
+        for (int pile : piles) time += (pile + mid - 1) / mid;
+        if (time > h) low = mid + 1;
+        else high = mid;
+    }
+    return low;
+}
+```
+---
+
+### 🟡 901. Online Stock Span (#901, Medium)
+Use a stack to store previous prices and spans.
+
+```java
+class StockSpanner {
+    Stack<int[]> stack = new Stack<>();
+    public int next(int price) {
+        int span = 1;
+        while (!stack.isEmpty() && stack.peek()[0] <= price) {
+            span += stack.pop()[1];
+        }
+        stack.push(new int[]{price, span});
+        return span;
+    }
+}
+```
+---
+
+### 🟡 1834. Single-Threaded CPU (#1834, Medium)
+Use a priority queue for task scheduling by time.
+
+```java
+public int[] getOrder(int[][] tasks) {
+    int n = tasks.length;
+    int[][] indexed = new int[n][3];
+    for (int i = 0; i < n; i++) {
+        indexed[i] = new int[]{tasks[i][0], tasks[i][1], i};
+    }
+    Arrays.sort(indexed, Comparator.comparingInt(a -> a[0]));
+    PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] == b[1] ? a[2] - b[2] : a[1] - b[1]);
+
+    int[] result = new int[n];
+    int time = 0, i = 0, idx = 0;
+    while (idx < n) {
+        while (i < n && indexed[i][0] <= time) pq.offer(indexed[i++]);
+        if (pq.isEmpty()) {
+            time = indexed[i][0];
+        } else {
+            int[] task = pq.poll();
+            result[idx++] = task[2];
+            time += task[1];
+        }
+    }
+    return result;
+}
+```
+---
+
+### 🟡 2874. Maximum Value of an Ordered Triplet II (#2874, Medium)
+Track max prefix and suffix to find maximum ordered triplet.
+
+```java
+public int maxValueOfTriplet(int[] nums) {
+    int max = 0, n = nums.length;
+    TreeSet<Integer> left = new TreeSet<>();
+    int[] rightMax = new int[n];
+    rightMax[n - 1] = nums[n - 1];
+    for (int i = n - 2; i >= 0; i--) rightMax[i] = Math.max(rightMax[i + 1], nums[i]);
+    for (int i = 1; i < n - 1; i++) {
+        left.add(nums[i - 1]);
+        Integer smaller = left.lower(nums[i]);
+        if (smaller != null && rightMax[i + 1] > nums[i]) {
+            max = Math.max(max, smaller * nums[i] * rightMax[i + 1]);
+        }
+    }
+    return max;
+}
+```
+---
+
 
 
 
