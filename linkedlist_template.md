@@ -142,11 +142,3 @@ ListNode middleNode(ListNode head) {
 }
 ```
 
----
-
-Let me know if you'd like to add templates for:
-- Palindrome linked list
-- Intersection of two linked lists
-- Copy list with random pointer
-- Linked list cycle II
-
