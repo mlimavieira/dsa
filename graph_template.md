@@ -468,11 +468,3 @@ boolean hasEulerianCircuit(int[][] graph) {
 }
 ```
 
----
-
-Let me know if you’d like templates for:
-- Bridge/Articulation Point Detection
-- Bipartite Graph Check
-- Bellman-Ford
-- Johnson’s Algorithm (All-Pairs Shortest Path for Sparse Graphs)
-
