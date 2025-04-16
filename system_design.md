@@ -431,16 +431,6 @@ Client --> Autocomplete API --> Trie + Ranking Engine --> Suggestions
 
 ---
 
-# System Design Questions Commonly Asked at Microsoft (Advanced)
-
-This document covers system design questions frequently asked at Microsoft interviews. Each section includes use cases, clarifying questions, services (with responsibilities), APIs, components (with roles), architecture diagrams (ASCII format), scaling strategies, data flow, trade-offs, and answers to typical follow-up questions.
-
----
-
-...(existing systems remain unchanged)
-
----
-
 ## 8. Payment Gateway System
 
 ### Use Cases
@@ -603,6 +593,3 @@ Producer --> Feed Generator --> Fanout Queue --> Feed DB / Cache --> Client
 
 ---
 
-
-
-XXXXXXXXXXXx
